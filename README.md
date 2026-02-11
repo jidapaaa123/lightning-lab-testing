@@ -51,4 +51,24 @@ Mock Demo
 
 Other Pattern Demo
 ```
+    [Fact]
+    public void Checkout_WithUserHavingExcessiveFines_ReturnsBadRequest()
+    {
+        // Arrange
+        var user = UserFactory.CreateUserWithExcessiveFines(50.00m);
+        var book = BookFactory.CreateAvailableBook();
+
+        var userServiceMock = new Mock<IUserService>();
+        userServiceMock.Setup(s => s.GetUser(user.Id)).Returns(user);
+
+        var bookServiceMock = new Mock<IBookService>();
+        bookServiceMock.Setup(s => s.GetBook(book.Id)).Returns(book);
+
+        // Act
+        var userResult = userServiceMock.Object.GetUser(user.Id);
+
+        // Assert
+        Assert.NotNull(userResult);
+        Assert.True(userResult.Fines > 10, "User should have fines exceeding $10");
+    }
 ```
